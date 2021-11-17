@@ -1,14 +1,24 @@
 // Configuration CAN
-#define PIN_ANALOGIQUE 15 // 15 => pin A0
+#define PIN_LIDAR 15 // 15 => pin A0
 #define RESOLUTION 12 // ADC 12 bits => 4096 values
-#define PERIODE_CAN_MS 1 // période d'écahtillonage (en négligeant les traitements)
 
+// Configuration comunications
 #define VISTESSE_USB 115200 // vitesse de l'USB
 
-unsigned short int resultCAN = 0; // le résultat de la conversion A/N
-double mesure = 0; // Le résultat de la conversion en Volts
+// Configuration du capteur
+#define THRESHOLD 1000 // en quantum, le niveau à paritr du quel on considère les signaux
+#define MIN_TIME_MS 25 // Le temps à partir duquel on ignore le passage (elimination bruit/perturbation)
 
-unsigned int time_ms;
+//#define DEBUG_MODE
+
+
+
+
+
+unsigned short int resultCAN = 0; // le résultat de la conversion A/N
+unsigned int time_ms; // le temps en ms du passage
+
+
 
 void setup() {
     analogReadResolution(RESOLUTION); // configuration du CAN
@@ -32,20 +42,24 @@ void loop() {
 
 void TC5_Handler (void) { // TC5 interrupt routine
   
-  resultCAN = analogRead(PIN_ANALOGIQUE); // Conversion A/N
-  
-  if ( resultCAN > 1000 ){
-    if (time_ms == 0) {
-        time_ms = 1;
-    } else {
-      time_ms++;
+  resultCAN = analogRead(PIN_LIDAR); // Conversion A/N
+  #ifdef DEBUG_MODE
+    Serial.print(resultCAN);
+    Serial.print(" Quantum\n");
+  #else
+    if ( resultCAN > THRESHOLD ){
+      if (time_ms == 0) {
+          time_ms = 1;
+      } else {
+        time_ms++;
+      }
+    } else if ( time_ms > MIN_TIME_MS ) {
+        Serial.print(time_ms);
+        Serial.print(" ms\n");
+        time_ms = 0;
     }
-  } else if ( time_ms > 25 ) {
-      Serial.print(time_ms);
-      Serial.print(" ms\n");
-      time_ms = 0;
-  }
-
+  #endif
+  
   TC5->COUNT16.INTFLAG.bit.MC0 = 1; // clear interrup flag
 }
 
@@ -68,7 +82,7 @@ void tcConfigure(void) {
     
     TC5->COUNT16.CTRLA.reg |= TC_CTRLA_PRESCALER_DIV1 | TC_CTRLA_ENABLE; // set prescaler to 1
     
-    TC5->COUNT16.CC[0].reg = (uint16_t) 48000; //set the compare-capture register. 
+    TC5->COUNT16.CC[0].reg = (uint16_t) 48000; //set the compare-capture register. 48000 => 1ms
     while (tcIsSyncing());
     
     // Configure interrupt request
