@@ -7,7 +7,7 @@
 
 // Configuration du capteur
 #define THRESHOLD 1000 // en quantum, le niveau à paritr du quel on considère les signaux
-#define MIN_TIME_MS 25 // Le temps à partir duquel on ignore le passage (elimination bruit/perturbation)
+#define MIN_TIME_MS 30 // Le temps à partir duquel on ignore le passage (elimination bruit/perturbation)
 
 //#define DEBUG_MODE
 
