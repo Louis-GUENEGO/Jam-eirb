@@ -9,7 +9,7 @@
 #define VISTESSE_USB 115200 // vitesse de l'USB
 
 // Configuration du capteur
-#define MIN_TIME_MS 30 // Le temps à partir duquel on ignore le passage (elimination bruit/perturbation)
+#define MIN_TIME_MS 50 // Le temps à partir duquel on ignore le passage (elimination bruit/perturbation)
 
 //#define DEBUG_MODE // Pour voir les données brutes
 
@@ -31,10 +31,8 @@ char message[100];
 
 unsigned char distance = 0; // le résultat de la conversion A/N
 unsigned int time_ms; // le temps en ms du passage
-unsigned short int seuil = 8;
+unsigned short int seuil = 6;
 unsigned int nbr_auto = 0;
-unsigned char voie = 3;
-
 
 
 
