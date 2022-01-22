@@ -16,7 +16,7 @@
 
 uint16_t id_node            = 236; // to change
 uint16_t id_traffic         = 558; // to change
-unsigned int freq = 865200000;//HZ
+unsigned int freq = 865500000;//HZ
 /*network */ 
 #define WITH_APPKEY
 unsigned int nCycle = 60;// in second 300
